@@ -8,13 +8,20 @@
 
   <ItemGroup>
     <Folder Include="Data\Config\" />
-    <Folder Include="Data\Repositories\" />
     <Folder Include="Reporting\" />
-    <Folder Include="Services\" />
+    <Folder Include="Services\Responses\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ninject" Version="3.3.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.4" />
+    <PackageReference Include="MongoDB.Driver" Version="3.3.0" />
+    <PackageReference Include="QuestPDF" Version="2025.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SCOPR.Application\SCOPR.Application.csproj" />
   </ItemGroup>
 
 </Project>
