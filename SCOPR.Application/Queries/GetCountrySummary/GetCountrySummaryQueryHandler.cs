@@ -3,7 +3,6 @@ using SCOPR.API.DTOs;
 using SCOPR.Application.Interfaces;
 using SCOPR.Domain.Entities;
 using SCOPR.Domain.Enums;
-using System.Diagnostics.Metrics;
 
 namespace SCOPR.Application.Queries.GetCountrySummary;
 

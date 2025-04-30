@@ -9,4 +9,6 @@ public interface IExchangeRateRepository
     Task<decimal> GetAverageRateInPeriodAsync(string baseCurrency, string targetCurrency, DateTime start, DateTime end);
 
     Task AddAsync(ExchangeRate rate);
+
+    Task UpdateAsync(ExchangeRate rate);
 }

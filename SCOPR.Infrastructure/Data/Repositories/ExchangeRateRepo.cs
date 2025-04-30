@@ -38,4 +38,10 @@ public class ExchangeRateRepo : IExchangeRateRepository
     {
         await _dbContext.GetCollection<ExchangeRate>("ExchangeRates").InsertOneAsync(rate);
     }
+
+    public async Task UpdateAsync(ExchangeRate rate)
+    {
+        var filter = Builders<ExchangeRate>.Filter.Eq(r => r.Id, rate.Id);
+        await _dbContext.GetCollection<ExchangeRate>("ExchangeRates").ReplaceOneAsync(filter, rate);
+    }
 }

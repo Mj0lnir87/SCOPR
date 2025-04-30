@@ -18,17 +18,17 @@ namespace SCOPR.API.Controllers
             // Validate the request
             if (request == null)
             {
-                throw new ArgumentNullException(nameof(request));
+                return BadRequest(new { Message = "Request cannot be null." });
             }
             // Validate the base currency
             if (string.IsNullOrWhiteSpace(request.BaseCurrency))
             {
-                throw new ArgumentException("Base currency must be provided.");
+                return BadRequest(new { Message = "Base currency must be provided." });
             }
             // Validate the target currencies
             if (request.TargetCurrencies == null || !request.TargetCurrencies.Any())
             {
-                throw new ArgumentException("At least one target currency must be provided.");
+                return BadRequest(new { Message = "At least one target currency must be provided." });
             }
 
             var command = new FetchExchangeRatesCommand(
@@ -36,14 +36,32 @@ namespace SCOPR.API.Controllers
                 request.TargetCurrencies
             );
 
-            // Send the command to the mediator
-            await mediator.Send(command);
+            try
+            {
+                // Send the command to the mediator
+                await mediator.Send(command);
 
-            // Return 
-            return Ok(new { Message = "Exchange rates fetched successfully." });
+                // Return 
+                return Ok(new { Message = "Exchange rates fetched successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                // Handle validation-related exceptions
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                // Handle cases where a resource is not found
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // Handle unexpected exceptions
+                return StatusCode(500, new { Message = "An unexpected error occurred.", Details = ex.Message });
+            }
         }
 
-        [HttpGet("latest/{baseCurrency}/{targetCurrency}")]
+       /* [HttpGet("latest/{baseCurrency}/{targetCurrency}")]
         public async Task<ActionResult<ExchangeRateDto>> GetLatestExchangeRateAsync(string baseCurrency,
             string targetCurrency)
         {
@@ -70,6 +88,6 @@ namespace SCOPR.API.Controllers
                 exchangeRate.Rate,
                 exchangeRate.CreatedAt));
 
-        } 
+        } */
     }
 }

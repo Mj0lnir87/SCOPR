@@ -10,6 +10,8 @@ using MediatR;
 using SCOPR.API.Controllers;
 using SCOPR.Application.Queries.GetCountrySummary;
 using System.Reflection;
+using SCOPR.API.Requests;
+using SCOPR.Application.Commands.GenerateReports;
 
 namespace SCOPR.API;
 
@@ -21,12 +23,11 @@ public static class DependencyInjection
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         // MediatR configuration  
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FetchCountriesCommand).Assembly));
+        /*services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FetchCountriesCommand).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FetchCountriesCommandHandler).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCountrySummaryQuery).Assembly));
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCountrySummaryQueryHandler).Assembly));
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CountriesController).Assembly));
-
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCountrySummaryQueryHandler).Assembly));*/
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GenerateReportCommand).Assembly));
 
         // MongoDB configuration  
         services.Configure<MongoDbSettings>(configuration.GetSection("ConnectionStrings"));

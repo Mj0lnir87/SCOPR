@@ -5,7 +5,7 @@ namespace SCOPR.API.DTOs;
 public class CountryDto
 {
     public Name name { get; set; }
-    public string cca2 { get; set; }
+    public string cioc { get; set; }
     public Currencies currencies { get; set; }
     public Idd idd { get; set; }
     public List<string> capital { get; set; }

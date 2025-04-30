@@ -43,10 +43,6 @@ public class CountryRepo : ICountryRepository
     public async Task UpdateAsync(Country country)
     {
         var filter = Builders<Country>.Filter.Eq(c => c.Id, country.Id);
-        var update = Builders<Country>.Update
-            .Set(c => c.Name, country.Name)
-            .Set(c => c.Code, country.Code)
-            .Set(c => c.Currency, country.Currency);
-        await _dbContext.GetCollection<Country>("Countries").UpdateOneAsync(filter, update);
+        await _dbContext.GetCollection<Country>("Countries").ReplaceOneAsync(filter, country);
     }
 }

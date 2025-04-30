@@ -10,7 +10,7 @@ namespace SCOPR.API.Controllers
     public class ReportsController(IMediator mediator) : Controller
     {
         [HttpPost("countries/summary")]
-        public async Task<FileContentResult> GenerateCountrySummaryReportAsync(GenerateReportRequest request)
+        public async Task<IActionResult> GenerateCountrySummaryReportAsync(GenerateReportRequest request)
         {
             // Validate the request
             if (request == null)
@@ -38,12 +38,12 @@ namespace SCOPR.API.Controllers
             // Send the command to the mediator
             var pdfBytes = await mediator.Send(command);
 
-            // Return the PDF file
-            return File(
-                pdfBytes,
-                "application/pdf",
-                $"CountrySummaryReport_{DateTime.Now:yyyyMMdd}.pdf"
-            );
+            //write the pdf to project base directory
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", $"CountrySummaryReport_{DateTime.Now:yyyyMMdd}.pdf");
+            await System.IO.File.WriteAllBytesAsync(filePath, pdfBytes);
+            
+            // Return the file path for debugging purposes
+            return Ok(new { Message = $"file written to {filePath}" });
         }
     }
 }

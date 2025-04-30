@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Reporting\" />
-    <Folder Include="Services\Responses\" />
   </ItemGroup>
 
   <ItemGroup>

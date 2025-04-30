@@ -1,16 +1,19 @@
 ﻿using SCOPR.Application.Interfaces;
 using SCOPR.Domain.Entities;
-using System.Reflection.Metadata;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Document = QuestPDF.Fluent.Document;
-using System.Xml.Linq;
 
 namespace SCOPR.Infrastructure.Reporting;
 
 public class QuestPdfReportGenerator: IReportGenerator
 {
+    public QuestPdfReportGenerator()
+    {
+        QuestPDF.Settings.License = LicenseType.Community;
+    }
+
     public Task<byte[]> GenerateCountrySummaryReportAsync(List<CountrySummary> summaries)
     {
         // Use QuestPDF to create a document
@@ -40,7 +43,7 @@ public class QuestPdfReportGenerator: IReportGenerator
         container.PaddingVertical(10).Column(column =>
         {
             column.Item().Text("Landensamenvatting").FontSize(18);
-            column.Item().Text($"Periode: {summaries.First().StartDate:d} - {summaries.First().EndDate:d}").FontSize(12);
+            column.Item().Text($"Periode: {summaries.First().StartDate:d} - {summaries.First().EndDate:d}").FontSize(12); //TODO: Sequence contains no elements -> so summaries is empty
             column.Item().PaddingTop(10);
 
             column.Item().Table(table =>

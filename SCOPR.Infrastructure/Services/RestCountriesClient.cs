@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using SCOPR.API.DTOs;
 using SCOPR.Application.Interfaces;
-using SCOPR.Infrastructure.Services.Responses;
 
 namespace SCOPR.Infrastructure.Services;
 

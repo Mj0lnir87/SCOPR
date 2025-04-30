@@ -27,32 +27,29 @@ public class FetchCountriesCommandHandler : IRequestHandler<FetchCountriesComman
         {
             var countryDto = await _countryApiClient.GetCountryByCodeAsync(countryCode);
 
-            if (countryDto != null)
+            //get currency code from the DTO
+            var currencyCode = countryDto.currencies.GetCurrencyCode();
+
+            var country = MapToCountry(countryDto, currencyCode);
+
+            var existingCountry = await _countryRepository.GetByCodeAsync(countryCode.ToUpperInvariant());
+            if (existingCountry == null)
             {
-                //get currency code from the DTO
-                var currencyCode = countryDto.currencies.GetCurrencyCode();
+                // Save new country to the database
+                await _countryRepository.AddAsync(country);
+            }
+            else
+            {
+                // Update existing country with new information
+                existingCountry.Name = country.Name;
+                existingCountry.PhoneCodes = country.PhoneCodes;
+                existingCountry.Capital = country.Capital;
+                existingCountry.Population = country.Population;
+                existingCountry.Currency = country.Currency;
+                existingCountry.Flag = country.Flag;
+                existingCountry.UpdatedAt = DateTime.Now;
 
-                var country = MapToCountry(countryDto, currencyCode);
-
-                var existingCountry = await _countryRepository.GetByCodeAsync(countryCode);
-                if (existingCountry == null)
-                {
-                    // Save new country to the database
-                    await _countryRepository.AddAsync(country);
-                }
-                else
-                {
-                    // Update existing country with new information
-                    existingCountry.Name = country.Name;
-                    existingCountry.PhoneCodes = country.PhoneCodes;
-                    existingCountry.Capital = country.Capital;
-                    existingCountry.Population = country.Population;
-                    existingCountry.Currency = country.Currency;
-                    existingCountry.Flag = country.Flag;
-                    existingCountry.UpdatedAt = DateTime.Now;
-
-                    await _countryRepository.UpdateAsync(existingCountry);
-                }
+                await _countryRepository.UpdateAsync(existingCountry);
             }
         }
         return Unit.Value;
@@ -72,7 +69,7 @@ public class FetchCountriesCommandHandler : IRequestHandler<FetchCountriesComman
         // Validate the country DTO
         var country=  new Country
         {
-            Code = countryDto.cca2,
+            Code = countryDto.cioc,
             Name = countryDto.name.common,
             PhoneCodes = phoneCodes,
             Capital = countryDto.capital[0],
