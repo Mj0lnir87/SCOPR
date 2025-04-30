@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SCOPR.Application\SCOPR.Application.csproj" />
+    <ProjectReference Include="..\SCOPR.Infrastructure\SCOPR.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

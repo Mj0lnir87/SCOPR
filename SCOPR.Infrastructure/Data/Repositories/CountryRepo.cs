@@ -8,6 +8,11 @@ public class CountryRepo : ICountryRepository
 {
     private readonly DbContext _dbContext;
 
+    public CountryRepo(DbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
     public async Task AddAsync(Country country)
     {
         await _dbContext.GetCollection<Country>("Countries").InsertOneAsync(country);

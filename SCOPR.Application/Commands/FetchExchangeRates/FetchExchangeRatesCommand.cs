@@ -2,7 +2,7 @@
 
 namespace SCOPR.Application.Commands.FetchExchangeRates;
 
-public class FetchExchangeRatesCommand : IRequest
+public class FetchExchangeRatesCommand : IRequest<Unit>
 {
     public string BaseCurrency { get; }
     public List<string> TargetCurrencies { get; }

@@ -4,7 +4,7 @@
     {
         public IList<string> CountryCodes { get; set; }
 
-        public FetchCountriesRequest(List<string> countryCodes)
+        public FetchCountriesRequest(IList<string> countryCodes)
         {
             CountryCodes = countryCodes;
         }

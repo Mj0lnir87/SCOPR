@@ -21,7 +21,6 @@ public class GetCountrySummaryQueryHandler : IRequestHandler<GetCountrySummaryQu
 
     public async Task<CountrySummaryDto> Handle(GetCountrySummaryQuery request, CancellationToken cancellationToken)
     {
-
         //get country data
         var countrySummary = _countryRepository.GetSummaryInPeriodAsync(request.CountryCode, request.StartDate, request.EndDate);
 

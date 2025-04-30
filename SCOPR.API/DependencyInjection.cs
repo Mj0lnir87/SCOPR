@@ -1,0 +1,54 @@
+﻿
+using Microsoft.Extensions.DependencyInjection;
+using SCOPR.Application.Commands.FetchCountries;
+using SCOPR.Application.Interfaces;
+using SCOPR.Infrastructure.Data;
+using SCOPR.Infrastructure.Data.Repositories;
+using SCOPR.Infrastructure.Reporting;
+using SCOPR.Infrastructure.Services;
+using MediatR;
+using SCOPR.API.Controllers;
+using SCOPR.Application.Queries.GetCountrySummary;
+using System.Reflection;
+
+namespace SCOPR.API;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    {
+        // Add MediatR with the assembly containing your request handlers  
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+        // MediatR configuration  
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FetchCountriesCommand).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FetchCountriesCommandHandler).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCountrySummaryQuery).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCountrySummaryQueryHandler).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CountriesController).Assembly));
+
+
+        // MongoDB configuration  
+        services.Configure<MongoDbSettings>(configuration.GetSection("ConnectionStrings"));
+        services.AddSingleton<DbContext>();
+
+        // Repositories  
+        services.AddScoped<ICountryRepository, CountryRepo>();
+        services.AddScoped<IExchangeRateRepository, ExchangeRateRepo>();
+
+        // HTTP clients  
+        services.AddHttpClient<ICountryApiClient, RestCountriesClient>();
+        services.AddHttpClient<IExchangeRateApiClient, FixerApiClient>();
+
+        // Rapport generator  
+        services.AddScoped<IReportGenerator, QuestPdfReportGenerator>();
+
+        return services;
+    }
+
+    public class MongoDbSettings
+    {
+        public string ConnectionString { get; set; }
+        public string DatabaseName { get; set; }
+    }
+}

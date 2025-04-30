@@ -1,7 +1,12 @@
-﻿namespace SCOPR.Domain.Entities;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+
+namespace SCOPR.Domain.Entities;
 
 public class ExchangeRate
 {
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
 
     public string BaseCurrencyCode { get; set; }

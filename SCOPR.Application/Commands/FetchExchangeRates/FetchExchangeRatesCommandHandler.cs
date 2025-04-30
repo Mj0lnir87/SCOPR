@@ -4,7 +4,7 @@ using SCOPR.Domain.Entities;
 
 namespace SCOPR.Application.Commands.FetchExchangeRates;
 
-public class FetchExchangeRatesCommandHandler : IRequestHandler<FetchExchangeRatesCommand>
+public class FetchExchangeRatesCommandHandler : IRequestHandler<FetchExchangeRatesCommand, Unit>
 {
     private readonly IExchangeRateApiClient _exchangeRateApiClient;
     private readonly IExchangeRateRepository _exchangeRateRepository;
@@ -17,7 +17,7 @@ public class FetchExchangeRatesCommandHandler : IRequestHandler<FetchExchangeRat
         _exchangeRateRepository = exchangeRateRepository;
     }
 
-    public async Task Handle(FetchExchangeRatesCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(FetchExchangeRatesCommand request, CancellationToken cancellationToken)
     {
         //get exchange rate
         var exchangeRateDto = await _exchangeRateApiClient.GetLatestRatesAsync(
@@ -50,5 +50,6 @@ public class FetchExchangeRatesCommandHandler : IRequestHandler<FetchExchangeRat
                 await _exchangeRateRepository.AddAsync(existingExchangeRate);
             }
         }
+        return Unit.Value;
     }
 }

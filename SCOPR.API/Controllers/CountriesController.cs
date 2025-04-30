@@ -17,25 +17,42 @@ namespace SCOPR.API.Controllers
             // Validate the request
             if (request == null)
             {
-                throw new ArgumentNullException(nameof(request));
+                return BadRequest(new { Message = "Request cannot be null." });
             }
 
             // Validate the country codes
             if (request.CountryCodes == null || !request.CountryCodes.Any())
             {
-                throw new ArgumentException("At least one country code must be provided.");
+                return BadRequest(new { Message = "At least one country code must be provided." });
             }
 
             var command = new FetchCountriesCommand(
                 request.CountryCodes
             );
 
-            // Send the command to the mediator
-            await mediator.Send(command);
+            try
+            {
+                // Send the command to the mediator
+                await mediator.Send(command);
 
-            // Return 
-            return Ok(new { Message = "Countries fetched successfully." });
-
+                // Return 
+                return Ok(new { Message = "Countries fetched successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                // Handle validation-related exceptions
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                // Handle cases where a resource is not found
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // Handle unexpected exceptions
+                return StatusCode(500, new { Message = "An unexpected error occurred.", Details = ex.Message });
+            }
         }
 
         [HttpGet("summary/{countryCode}")]
@@ -44,22 +61,29 @@ namespace SCOPR.API.Controllers
             // Validate the request
             if (string.IsNullOrWhiteSpace(code))
             {
-                throw new ArgumentNullException(nameof(code));
+                return BadRequest(new { Message = "Country code cannot be null or empty." });
             }
 
             // Validate the date range
             if (startDate > endDate)
             {
-                throw new ArgumentException("Start date must be less than or equal to end date.");
+                return BadRequest(new { Message = "Start date must be less than or equal to end date." });
             }
 
-            // Fetch the country summary from the repository
-            var country = await mediator.Send(new GetCountrySummaryQuery(code, startDate, endDate));
-            if (country == null)
+            try
             {
-                return NotFound();
+                // Fetch the country summary from the repository
+                var country = await mediator.Send(new GetCountrySummaryQuery(code, startDate, endDate));
+                if (country == null)
+                {
+                    return NotFound();
+                }
+                return Ok(country);
             }
-            return Ok(country);
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
 
         }
 
@@ -69,22 +93,30 @@ namespace SCOPR.API.Controllers
             // Validate the request
             if (string.IsNullOrWhiteSpace(code))
             {
-                throw new ArgumentNullException(nameof(code));
+                return BadRequest(new { Message = "Country code cannot be null or empty." });
             }            
             
             // Validate the date range
             if (startDate > endDate)
             {
-                throw new ArgumentException("Start date must be less than or equal to end date.");
+                return BadRequest(new { Message = "Start date must be less than or equal to end date." });
             }
 
-            // Fetch the country summary from the repository
-            var countrySummary = await mediator.Send(new GetCountrySummaryQuery(code, startDate, endDate));
-            if (countrySummary == null)
+            try
             {
-                return NotFound();
+                // Fetch the country summary from the repository
+                var countrySummary = await mediator.Send(new GetCountrySummaryQuery(code, startDate, endDate));
+                if (countrySummary == null)
+                {
+                    return NotFound();
+                }
+                return Ok(countrySummary);
             }
-            return Ok(countrySummary);
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+
 
         }
     }

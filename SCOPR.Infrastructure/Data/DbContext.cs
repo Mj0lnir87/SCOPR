@@ -1,14 +1,19 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.Extensions.Configuration;
+using MongoDB.Driver;
 
 namespace SCOPR.Infrastructure.Data;
 
 public class DbContext
 {
-    private readonly IMongoDatabase _db;
+    private readonly IMongoDatabase _db; 
 
-    public DbContext(string connectionString, string databaseName)
+    public DbContext(IConfiguration config)
     {
-        //todo: get settings from appsettings.json
+        string connectionString = config.GetConnectionString("DefaultConnection");
+        string databaseName = config.GetSection("ConnectionStrings:DatabaseName").Value;
+
+        ValidateConnectionsettings(connectionString, databaseName);
+
         var client = new MongoClient(connectionString);
         _db = client.GetDatabase(databaseName);
     }
@@ -16,5 +21,29 @@ public class DbContext
     public IMongoCollection<T> GetCollection<T>(string name)
     {
         return _db.GetCollection<T>(name);
+    }
+
+    private void ValidateConnectionsettings(string connectionString, string databaseName)
+    {
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new ArgumentNullException(nameof(connectionString), "Connection string cannot be null or empty.");
+        }
+        if (string.IsNullOrEmpty(databaseName))
+        {
+            throw new ArgumentNullException(nameof(databaseName), "Database name cannot be null or empty.");
+        }
+        if (!connectionString.StartsWith("mongodb://"))
+        {
+            throw new ArgumentException("Invalid connection string format. It should start with 'mongodb://'.", nameof(connectionString));
+        }
+        if (connectionString.Contains(" "))
+        {
+            throw new ArgumentException("Connection string cannot contain spaces.", nameof(connectionString));
+        }
+        if (databaseName.Contains(" "))
+        {
+            throw new ArgumentException("Database name cannot contain spaces.", nameof(databaseName));
+        }
     }
 }
