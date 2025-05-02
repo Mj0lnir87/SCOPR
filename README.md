@@ -133,4 +133,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact
 
-Project Link: [https://github.com/yourusername/SCOPR](https://github.com/Mj0lnir87/SCOPR)
+Project Link: [https://github.com/Mj0lnir87/SCOPR](https://github.com/Mj0lnir87/SCOPR)
