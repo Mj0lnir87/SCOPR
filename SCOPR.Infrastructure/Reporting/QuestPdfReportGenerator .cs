@@ -63,25 +63,28 @@ public class QuestPdfReportGenerator: IReportGenerator
                 // Header row
                 table.Header(header =>
                 {
-                    header.Cell().Text("Country").SemiBold();
-                    header.Cell().Text("Phone code").SemiBold();
-                    header.Cell().Text("Capital").SemiBold();
-                    header.Cell().Text("Avg. Population").SemiBold();
-                    header.Cell().Text("Currency").SemiBold();
-                    header.Cell().Text("Avg. Rate").SemiBold();
+                    header.Cell().Text("Country").Bold();
+                    header.Cell().Text("Phone code").Bold();
+                    header.Cell().Text("Capital").Bold();
+                    header.Cell().Text("Avg. Population").Bold();
+                    header.Cell().Text("Currency").Bold();
+                    header.Cell().Text("Avg. Rate").Bold();
+                    header.Cell().ColumnSpan(6).PaddingTop(3).PaddingBottom(5).Border(2);
                 });
 
                 // Data rows
-                foreach (var summary in summaries)
+                for (int i = 0; i < summaries.Count; i++)
                 {
-                    table.Cell().Text(summary.CountryName);
-                    table.Cell().Text(string.Join(", ", summary.PhoneCodes));
-                    table.Cell().Text(summary.Capital);
-                    table.Cell().Text(summary.AveragePopulation.ToString("0.0"));
-                    table.Cell().Text(summary.Currency.Code);
-                    table.Cell().Text($"€1 = {summary.Currency.Symbol}{summary.AverageExchangeRate:F4}");
+                    var summary = summaries[i];
+                    var backgroundColor = i % 2 == 0 ? Colors.Grey.Lighten4 : Colors.White;
+                    var textColor = i % 2 == 0 ? Colors.Black : Colors.DeepPurple.Accent1;
 
-                    // Add a blank space after each row
+                    table.Cell().Background(backgroundColor).Text(summary.CountryName).FontColor(textColor);
+                    table.Cell().Background(backgroundColor).Text(string.Join(", ", summary.PhoneCodes)).FontColor(textColor);
+                    table.Cell().Background(backgroundColor).Text(summary.Capital).FontColor(textColor);
+                    table.Cell().Background(backgroundColor).Text(summary.AveragePopulation.ToString("0.0")).FontColor(textColor);
+                    table.Cell().Background(backgroundColor).Text(summary.Currency.Code).FontColor(textColor);
+                    table.Cell().Background(backgroundColor).Text($"€1 = {summary.Currency.Symbol}{summary.AverageExchangeRate:F4}").FontColor(textColor);
                     table.Cell().ColumnSpan(6).PaddingTop(5).Text(string.Empty);
                 }
             });
