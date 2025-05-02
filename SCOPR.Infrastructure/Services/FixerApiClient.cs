@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Configuration;
-using SCOPR.API.DTOs;
+using SCOPR.Application.DTOs;
 using SCOPR.Application.Interfaces;
 
 namespace SCOPR.Infrastructure.Services;
@@ -25,6 +25,18 @@ public class FixerApiClient : IExchangeRateApiClient
         _httpClient.BaseAddress = new Uri(section[_url]);
     }
 
+    /// <summary>
+    /// Get the latest exchange rates for a given base currency and a list of target currencies.
+    /// </summary>
+    /// <param name="baseCurrency"></param>
+    /// <param name="targetCurrencies"></param>
+    /// <param name="startDate"></param>
+    /// <param name="endDate"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="KeyNotFoundException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="Exception"></exception>
     public async Task<IList<ExchangeRateDto>> GetLatestRatesAsync(string baseCurrency, List<string> targetCurrencies, DateTime startDate, DateTime endDate)
     {
         // Validate the input
@@ -80,7 +92,7 @@ public class FixerApiClient : IExchangeRateApiClient
             // Add the exchange rate to the list
             exchangeRates.Add(exchangeRateDto);
 
-            // Add a timeout because the API throws an error stating "106: rate_limit_reached".
+            // Added a timeout because the API throws an error stating "106: rate_limit_reached".
             // It's because we're on a free plan. While it's not ideal, it's a workaround.
             // This would never be done in production code!!!
             await Task.Delay(1000);

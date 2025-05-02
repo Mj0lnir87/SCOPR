@@ -14,6 +14,11 @@ public class QuestPdfReportGenerator: IReportGenerator
         QuestPDF.Settings.License = LicenseType.Community;
     }
 
+    /// <summary>
+    /// Generates a PDF report for the given country summaries.
+    /// </summary>
+    /// <param name="summaries"></param>
+    /// <returns></returns>
     public Task<byte[]> GenerateCountrySummaryReportAsync(List<CountrySummary> summaries)
     {
         // Use QuestPDF to create a document
@@ -38,6 +43,11 @@ public class QuestPdfReportGenerator: IReportGenerator
         return Task.FromResult(document.GeneratePdf());
     }
 
+    /// <summary>
+    /// Renders the content of the PDF document.
+    /// </summary>
+    /// <param name="container"></param>
+    /// <param name="summaries"></param>
     private void RenderContent(IContainer container, List<CountrySummary> summaries)
     {
         container.PaddingVertical(10).Column(column =>

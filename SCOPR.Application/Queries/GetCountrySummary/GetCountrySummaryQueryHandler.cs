@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SCOPR.API.DTOs;
+using SCOPR.Application.DTOs;
 using SCOPR.Application.Interfaces;
 using SCOPR.Domain.Entities;
 using SCOPR.Domain.Enums;
@@ -18,6 +18,13 @@ public class GetCountrySummaryQueryHandler : IRequestHandler<GetCountrySummaryQu
         _exchangeRateRepository = exchangeRateRepository;
     }
 
+    /// <summary>
+    /// Handles the GetCountrySummaryQuery request.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<CountrySummary> Handle(GetCountrySummaryQuery request, CancellationToken cancellationToken)
     {
         // Get country data
@@ -44,7 +51,15 @@ public class GetCountrySummaryQueryHandler : IRequestHandler<GetCountrySummaryQu
         return MapToCountrySummary(country, exchangeRate, population, request.StartDate, request.EndDate);
     }
 
-    // Map the country summary to the DTO
+    /// <summary>
+    /// Maps the country data to a CountrySummary object.
+    /// </summary>
+    /// <param name="country"></param>
+    /// <param name="exchangeRate"></param>
+    /// <param name="population"></param>
+    /// <param name="startDate"></param>
+    /// <param name="endDate"></param>
+    /// <returns></returns>
     private CountrySummary MapToCountrySummary(Country country, decimal exchangeRate, double population, DateTime startDate, DateTime endDate)
     {
         return new CountrySummary
@@ -60,7 +75,7 @@ public class GetCountrySummaryQueryHandler : IRequestHandler<GetCountrySummaryQu
                 Name = country.Currency.Name,
                 Symbol = country.Currency.Symbol
             },
-            FlagUrl = country.Flag,
+            Flag = country.Flag,
             AverageExchangeRate = exchangeRate,
             StartDate = startDate,
             EndDate = endDate

@@ -14,17 +14,21 @@ public class CountryRepo : ICountryRepository
         _dbContext = dbContext;
     }
 
+    /// <summary>
+    /// Adds a new country to the database.
+    /// </summary>
+    /// <param name="country"></param>
+    /// <returns></returns>
     public async Task AddAsync(Country country)
     {
         await _dbContext.GetCollection<Country>("Countries").InsertOneAsync(country);
     }
-
-    public async Task<List<Country>> GetAllByCodesAsync(IList<string> codes)
-    {
-        var filter = Builders<Country>.Filter.In(c => c.Code, codes);
-        return await _dbContext.GetCollection<Country>("Countries").Find(filter).ToListAsync();
-    }
-
+    
+    /// <summary>
+    /// Gets a country by its code.
+    /// </summary>
+    /// <param name="code"></param>
+    /// <returns></returns>
     public async Task<Country> GetByCodeAsync(string code)
     {
         var filter = Builders<Country>.Filter.And(
@@ -35,12 +39,24 @@ public class CountryRepo : ICountryRepository
         return await _dbContext.GetCollection<Country>("Countries").Find(filter).FirstOrDefaultAsync();
     }
 
+    /// <summary>
+    /// Gets a country by its ID.
+    /// </summary>
+    /// <param name="country"></param>
+    /// <returns></returns>
     public async Task UpdateAsync(Country country)
     {
         var filter = Builders<Country>.Filter.Eq(c => c.Id, country.Id);
         await _dbContext.GetCollection<Country>("Countries").ReplaceOneAsync(filter, country);
     }
 
+    /// <summary>
+    /// Gets the average population of a country in a given period.
+    /// </summary>
+    /// <param name="requestCountryCode"></param>
+    /// <param name="startDate"></param>
+    /// <param name="endDate"></param>
+    /// <returns></returns>
     public async Task<double> GetAveragePopulationInPeriodAsync(string requestCountryCode, DateTime startDate, DateTime endDate)
     {
         var filter = Builders<Country>.Filter.And(

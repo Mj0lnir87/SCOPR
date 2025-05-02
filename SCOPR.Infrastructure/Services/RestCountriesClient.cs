@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Configuration;
-using SCOPR.API.DTOs;
+using SCOPR.Application.DTOs;
 using SCOPR.Application.Interfaces;
 
 namespace SCOPR.Infrastructure.Services;
@@ -25,6 +25,15 @@ public class RestCountriesClient : ICountryApiClient
         _httpClient.BaseAddress = new Uri(section[_url]);
     }
 
+    /// <summary>
+    /// Get a list of all countries.
+    /// </summary>
+    /// <param name="code"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="KeyNotFoundException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="Exception"></exception>
     public async Task<CountryDto> GetCountryByCodeAsync(string code)
     {
         // Validate the input

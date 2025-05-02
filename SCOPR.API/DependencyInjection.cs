@@ -17,17 +17,18 @@ namespace SCOPR.API;
 
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Extension method to add infrastructure services to the service collection.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // Add MediatR with the assembly containing your request handlers  
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         // MediatR configuration  
-        /*services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FetchCountriesCommand).Assembly));
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FetchCountriesCommandHandler).Assembly));
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCountrySummaryQuery).Assembly));
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCountrySummaryQueryHandler).Assembly));*/
-        
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GenerateReportRequest).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GenerateReportCommand).Assembly));
 
@@ -49,6 +50,9 @@ public static class DependencyInjection
         return services;
     }
 
+    /// <summary>
+    /// Configuration settings for MongoDB.
+    /// </summary>
     public class MongoDbSettings
     {
         public string ConnectionString { get; set; }

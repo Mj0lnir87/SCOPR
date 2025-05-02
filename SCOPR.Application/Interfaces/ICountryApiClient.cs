@@ -1,4 +1,4 @@
-﻿using SCOPR.API.DTOs;
+﻿using SCOPR.Application.DTOs;
 
 namespace SCOPR.Application.Interfaces;
 

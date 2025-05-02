@@ -1,21 +1,28 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SCOPR.API.DTOs;
+using SCOPR.Application.DTOs;
 using SCOPR.API.Requests;
 using SCOPR.Application.Commands.FetchCountries;
 using SCOPR.Application.Queries.GetCountrySummary;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
+using SCOPR.Domain.Entities;
 
 namespace SCOPR.API.Controllers
 {
+    /// <summary>
+    /// Controller for managing countries.
+    /// </summary>
+    /// <param name="mediator"></param>
     [ApiController]
     [Route("api/[controller]")]
     public class CountriesController(IMediator mediator) : Controller
     {
         /// <summary>
-        /// Save a person
+        /// Fetches countries from the API based on the provided country codes.
         /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("fetch")]
         [SwaggerResponse(200)]
         [SwaggerResponse(400)]
@@ -30,7 +37,7 @@ namespace SCOPR.API.Controllers
                 return BadRequest(new { Message = "Request cannot be null." });
             }
 
-// \UValidate the country codes
+            // Validate the country codes
             if (request.CountryCodes == null || !request.CountryCodes.Any())
             {
                 return BadRequest(new { Message = "At least one country code must be provided." });
@@ -64,14 +71,21 @@ namespace SCOPR.API.Controllers
                 return StatusCode(500, new { Message = "An unexpected error occurred.", Details = ex.Message });
             }
         }
-        
+
+        /// <summary>
+        /// Gets the summary of a country based on the provided country code and date range.
+        /// </summary>
+        /// <param name="countryCode"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
         [HttpGet("summary/{countryCode}")]
         [SwaggerResponse(200)]
         [SwaggerResponse(400)]
         [SwaggerResponse(404)]
         [SwaggerResponse(500)]
         [SwaggerOperation(Summary = "Get country summary", Description = "Fetches the summary of a country based on the provided country code and date range.")]
-        public async Task<ActionResult<CountryDto>> GetCountryAsync(string countryCode, DateTime startDate, DateTime endDate)
+        public async Task<ActionResult<CountrySummary>> GetCountryAsync(string countryCode, DateTime startDate, DateTime endDate)
         {
             // Validate the request
             if (string.IsNullOrWhiteSpace(countryCode))
@@ -106,6 +120,64 @@ namespace SCOPR.API.Controllers
                     return NotFound();
                 }
                 return Ok(country);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+
+        }
+
+        /// <summary>
+        /// Gets the summaries of multiple countries based on the provided country codes and date range.
+        /// </summary>
+        /// <param name="countryCodes"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        [HttpGet("summary")]
+        [SwaggerResponse(200)]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(404)]
+        [SwaggerResponse(500)]
+        [SwaggerOperation(Summary = "Get country summaries", Description = "Fetches the summaries of multiple countries based on the provided country codes and date range.")]
+        public async Task<ActionResult<IList<CountrySummary>>> GetCountriesAsync([FromQuery]IList<string> countryCodes, DateTime startDate, DateTime endDate)
+        {
+            // Validate the countryCodes
+            if (countryCodes == null || !countryCodes.Any())
+            {
+                return BadRequest(new { Message = "At least one country code must be provided." });
+            }
+            // Validate the date range
+            if (startDate >= endDate)
+            {
+                return BadRequest(new { Message = "Start date must be less than or equal to end date." });
+            }
+            // The date range should be within one month
+            if ((endDate - startDate).TotalDays > 30)
+            {
+                return BadRequest(new { Message = "Date range must be less than or equal to 30 days." });
+            }
+            // End date should be before or equal to today
+            if (endDate > DateTime.Now)
+            {
+                return BadRequest(new { Message = "End date must be less than or equal to today." });
+            }
+            try
+            {
+                IList<CountrySummary> countries = new List<CountrySummary>();
+                foreach (var code in countryCodes)
+                {
+                    // Fetch the country summary from the repository
+                    var countrySymmary = await mediator.Send(new GetCountrySummaryQuery(code, startDate, endDate));
+                    if (countries == null)
+                    {
+                        return NotFound();
+                    }
+                    countries.Add(countrySymmary);
+                }
+
+                return Ok(countries);
             }
             catch (Exception ex)
             {

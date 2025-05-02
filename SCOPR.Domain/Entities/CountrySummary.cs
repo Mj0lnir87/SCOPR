@@ -14,7 +14,7 @@ namespace SCOPR.Domain.Entities
         public string Capital { get; set; }
         public double AveragePopulation { get; set; }
         public Currency Currency { get; set; }
-        public string FlagUrl { get; set; }
+        public string Flag { get; set; }
         public decimal AverageExchangeRate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

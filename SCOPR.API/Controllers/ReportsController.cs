@@ -6,6 +6,10 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace SCOPR.API.Controllers
 {
+    /// <summary>
+    /// Controller for generating reports.
+    /// </summary>
+    /// <param name="mediator"></param>
     [ApiController]
     [Route("api/[controller]")]
     public class ReportsController(IMediator mediator) : Controller
@@ -67,7 +71,6 @@ namespace SCOPR.API.Controllers
                 // Handle unexpected exceptions
                 return StatusCode(500, new { Message = "An unexpected error occurred.", Details = ex.Message });
             }
-
         }
     }
 }

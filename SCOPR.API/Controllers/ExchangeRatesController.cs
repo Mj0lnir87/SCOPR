@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SCOPR.API.DTOs;
+using SCOPR.Application.DTOs;
 using SCOPR.API.Requests;
 using SCOPR.Application.Commands.FetchExchangeRates;
 using SCOPR.Application.Interfaces;
@@ -8,11 +8,19 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace SCOPR.API.Controllers
 {
+    /// <summary>
+    /// Controller for managing exchange rates.
+    /// </summary>
+    /// <param name="mediator"></param>
     [ApiController]
     [Route("api/[controller]")]
-    public class ExchangeRatesController(IMediator mediator, IExchangeRateRepository exchangeRateRepository) : Controller
+    public class ExchangeRatesController(IMediator mediator) : Controller
     {
-
+        /// <summary>
+        /// Fetch exchange rates from the API
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("fetch")]
         [SwaggerResponse(200)]
         [SwaggerResponse(400)]

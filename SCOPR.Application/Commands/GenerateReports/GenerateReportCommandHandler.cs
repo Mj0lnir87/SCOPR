@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SCOPR.API.DTOs;
+using SCOPR.Application.DTOs;
 using SCOPR.Application.Interfaces;
 using SCOPR.Application.Queries.GetCountrySummary;
 using SCOPR.Domain.Entities;
@@ -26,6 +26,13 @@ public class GenerateReportCommandHandler : IRequestHandler<GenerateReportComman
         this.mediator = mediator;
     }
 
+    /// <summary>
+    /// Handles the GenerateReportCommand and generates a report for the specified countries.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<byte[]> Handle(GenerateReportCommand request, CancellationToken cancellationToken)
     {
         List<CountrySummary> countrySummaries = new List<CountrySummary>();

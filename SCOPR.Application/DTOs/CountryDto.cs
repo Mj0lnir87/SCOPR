@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace SCOPR.API.DTOs;
+namespace SCOPR.Application.DTOs;
 
+/// <summary>
+/// Represents a country data transfer object.
+/// </summary>
 public class CountryDto
 {
     public Name name { get; set; }
@@ -13,6 +16,9 @@ public class CountryDto
     public int population { get; set; }
 }
 
+/// <summary>
+/// Represents a collection of currencies.
+/// </summary>
 public class Currencies
 {
     [Newtonsoft.Json.JsonExtensionData]
@@ -23,10 +29,7 @@ public class Currencies
     {
         get => Items.TryGetValue(currencyCode, out var currency) ? currency : null;
     }
-
-    // Helper methods
-    public bool HasCurrency(string currencyCode) => Items.ContainsKey(currencyCode);
-
+    
     public IEnumerable<string> AvailableCurrencies => Items.Keys;
 
     // Helper methods to get specific properties
@@ -49,12 +52,18 @@ public class Currencies
     }
 }
 
+/// <summary>
+/// Represents the International Direct Dialing (IDD) information.
+/// </summary>
 public class Idd
 {
     public string root { get; set; }
     public List<string> suffixes { get; set; }
 }
 
+/// <summary>
+/// Represents the name of a country.
+/// </summary>
 public class Name
 {
     public string common { get; set; }

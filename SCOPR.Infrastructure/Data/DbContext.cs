@@ -18,11 +18,24 @@ public class DbContext
         _db = client.GetDatabase(databaseName);
     }
 
+    /// <summary>
+    /// Gets the collection of the specified type.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="name"></param>
+    /// <returns></returns>
     public IMongoCollection<T> GetCollection<T>(string name)
     {
         return _db.GetCollection<T>(name);
     }
 
+    /// <summary>
+    /// Validates the connection settings.
+    /// </summary>
+    /// <param name="connectionString"></param>
+    /// <param name="databaseName"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     private void ValidateConnectionsettings(string connectionString, string databaseName)
     {
         if (string.IsNullOrEmpty(connectionString))

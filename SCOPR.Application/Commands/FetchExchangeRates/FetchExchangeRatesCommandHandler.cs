@@ -17,6 +17,13 @@ public class FetchExchangeRatesCommandHandler : IRequestHandler<FetchExchangeRat
         _exchangeRateRepository = exchangeRateRepository;
     }
 
+    /// <summary>
+    /// Fetch exchange rates for a given date range and target currencies.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<Unit> Handle(FetchExchangeRatesCommand request, CancellationToken cancellationToken)
     {
         // Get exchange rate

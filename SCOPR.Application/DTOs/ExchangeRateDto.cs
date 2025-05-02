@@ -1,23 +1,13 @@
 ﻿using Newtonsoft.Json.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace SCOPR.API.DTOs;
+namespace SCOPR.Application.DTOs;
 
+/// <summary>
+/// Represents the response from the ExchangeRate API.
+/// </summary>
 public class ExchangeRateDto
 {
-    /*public string BaseCurrencyCode { get; set; }
-    public string TargetCurrencyCode { get; set; }
-    public decimal Rate { get; set; }
-    public DateTime Timestamp { get; set; }
-
-    public ExchangeRateDto(string baseCurrencyCode, string targetCurrencyCode, decimal rate, DateTime timestamp)
-    {
-        BaseCurrencyCode = baseCurrencyCode;
-        TargetCurrencyCode = targetCurrencyCode;
-        Rate = rate;
-        Timestamp = timestamp;
-    }*/
-
     public bool success { get; set; }
     public int timestamp { get; set; }
     public string @base { get; set; }
@@ -26,6 +16,10 @@ public class ExchangeRateDto
     public Error error { get; set; }
 
 }
+
+/// <summary>
+/// Represents the rates of different currencies.
+/// </summary>
 public class Rates
 {
     [Newtonsoft.Json.JsonExtensionData]
@@ -38,6 +32,9 @@ public class Rates
     }
 }
 
+/// <summary>
+/// Represents an error response from the ExchangeRate API.
+/// </summary>
 public class Error
 {
     public int code { get; set; }

@@ -2,7 +2,7 @@
 using SCOPR.Domain.Entities;
 using System.Diagnostics.Metrics;
 using Newtonsoft.Json.Linq;
-using SCOPR.API.DTOs;
+using SCOPR.Application.DTOs;
 using SCOPR.Application.Interfaces;
 using SCOPR.Domain.Enums;
 
@@ -21,6 +21,12 @@ public class FetchCountriesCommandHandler : IRequestHandler<FetchCountriesComman
         _countryRepository = countryRepository;
     }
 
+    /// <summary>
+    /// Fetches country data from the API and saves it to the database.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<Unit> Handle(FetchCountriesCommand request, CancellationToken cancellationToken)
     {
         foreach (var countryCode in request.CountryCodes)
