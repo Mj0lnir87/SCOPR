@@ -21,15 +21,15 @@ public class QuestPdfReportGenerator: IReportGenerator
         {
             container.Page(page =>
             {
-                page.Size(PageSizes.A4);
-                page.Margin(50);
-                page.Header().Text("Landenrapport").SemiBold().FontSize(24);
+                page.Size(PageSizes.A4.Landscape());
+                page.Margin(15);
+                page.Header().Text("Country Report").SemiBold().FontSize(24);
                 page.Content().Element(x => RenderContent(x, summaries));
                 page.Footer().AlignCenter().Text(x =>
                 {
-                    x.Span("Pagina ");
+                    x.Span("Page ");
                     x.CurrentPageNumber();
-                    x.Span(" van ");
+                    x.Span(" of ");
                     x.TotalPages();
                 });
             });
@@ -42,40 +42,47 @@ public class QuestPdfReportGenerator: IReportGenerator
     {
         container.PaddingVertical(10).Column(column =>
         {
-            column.Item().Text("Landensamenvatting").FontSize(18);
-            column.Item().Text($"Periode: {summaries.First().StartDate:d} - {summaries.First().EndDate:d}").FontSize(12); //TODO: Sequence contains no elements -> so summaries is empty
-            column.Item().PaddingTop(10);
+            column.Item().Text("Country summary").FontSize(14);
+            column.Item().Text($"Period: {summaries.First().StartDate:d} - {summaries.First().EndDate:d}").FontSize(10);
+            column.Item().PaddingTop(5);
+            column.Item().PaddingBottom(5).BorderBottom(1).BorderColor(Colors.Grey.Medium);
 
             column.Item().Table(table =>
             {
-                // Definieer kolommen
+                // Column definition
                 table.ColumnsDefinition(cols =>
                 {
                     cols.ConstantColumn(120);
-                    cols.ConstantColumn(80);
+                    cols.ConstantColumn(300);
                     cols.ConstantColumn(120);
                     cols.ConstantColumn(100);
+                    cols.ConstantColumn(80);
                     cols.RelativeColumn();
                 });
 
-                // Header rij
+                // Header row
                 table.Header(header =>
                 {
-                    header.Cell().Text("Land").SemiBold();
-                    header.Cell().Text("Tel. Code").SemiBold();
-                    header.Cell().Text("Hoofdstad").SemiBold();
-                    header.Cell().Text("Munteenheid").SemiBold();
-                    header.Cell().Text("Gem. Koers").SemiBold();
+                    header.Cell().Text("Country").SemiBold();
+                    header.Cell().Text("Phone code").SemiBold();
+                    header.Cell().Text("Capital").SemiBold();
+                    header.Cell().Text("Avg. Population").SemiBold();
+                    header.Cell().Text("Currency").SemiBold();
+                    header.Cell().Text("Avg. Rate").SemiBold();
                 });
 
-                // Data rijen
+                // Data rows
                 foreach (var summary in summaries)
                 {
                     table.Cell().Text(summary.CountryName);
-                    table.Cell().Text(summary.PhoneCode);
+                    table.Cell().Text(string.Join(", ", summary.PhoneCodes));
                     table.Cell().Text(summary.Capital);
+                    table.Cell().Text(summary.AveragePopulation.ToString("0.0"));
                     table.Cell().Text(summary.Currency.Code);
-                    table.Cell().Text($"€1 = {summary.AverageExchangeRate:F4}");
+                    table.Cell().Text($"€1 = {summary.Currency.Symbol}{summary.AverageExchangeRate:F4}");
+
+                    // Add a blank space after each row
+                    table.Cell().ColumnSpan(6).PaddingTop(5).Text(string.Empty);
                 }
             });
         });

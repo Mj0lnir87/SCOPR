@@ -12,6 +12,7 @@ public class ExchangeRate
     public string BaseCurrencyCode { get; set; }
 
     public string TargetCurrencyCode { get; set; }
+    public DateTime Date { get; set; }
 
     public decimal Rate { get; set; }
 

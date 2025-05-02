@@ -8,5 +8,6 @@ public interface ICountryRepository
     Task<List<Country>> GetAllByCodesAsync(IList<string> codes);
     Task AddAsync(Country country);
     Task UpdateAsync(Country country);
-    Task<CountrySummary> GetSummaryInPeriodAsync(string code, DateTime start, DateTime end);
+
+    Task<double> GetAveragePopulationInPeriodAsync(string requestCountryCode, DateTime requestStartDate, DateTime requestEndDate);
 }

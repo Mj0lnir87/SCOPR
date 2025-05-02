@@ -4,6 +4,7 @@ using SCOPR.API.DTOs;
 using SCOPR.API.Requests;
 using SCOPR.Application.Commands.FetchExchangeRates;
 using SCOPR.Application.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SCOPR.API.Controllers
 {
@@ -13,6 +14,11 @@ namespace SCOPR.API.Controllers
     {
 
         [HttpPost("fetch")]
+        [SwaggerResponse(200)]
+        [SwaggerResponse(400)]
+        [SwaggerResponse(404)]
+        [SwaggerResponse(500)]
+        [SwaggerOperation(Summary = "Fetch exchange rates from the API", Description = "Fetches exchange rates from the 'Fixer.io' API based on the provided base currency and target currencies.")]
         public async Task<IActionResult> FetchExchangeRatesAsync(FetchExchangeRatesRequest request)
         {
             // Validate the request
@@ -31,9 +37,17 @@ namespace SCOPR.API.Controllers
                 return BadRequest(new { Message = "At least one target currency must be provided." });
             }
 
+            // Validate the date range
+            if (request.StartDate >= request.EndDate)
+            {
+                return BadRequest(new { Message = "Start date must be less than or equal to end date." });
+            }
+
             var command = new FetchExchangeRatesCommand(
                 request.BaseCurrency,
-                request.TargetCurrencies
+                request.TargetCurrencies,
+                request.StartDate,
+                request.EndDate
             );
 
             try
@@ -60,34 +74,5 @@ namespace SCOPR.API.Controllers
                 return StatusCode(500, new { Message = "An unexpected error occurred.", Details = ex.Message });
             }
         }
-
-       /* [HttpGet("latest/{baseCurrency}/{targetCurrency}")]
-        public async Task<ActionResult<ExchangeRateDto>> GetLatestExchangeRateAsync(string baseCurrency,
-            string targetCurrency)
-        {
-            // Validate the base and target currencies
-            if (string.IsNullOrWhiteSpace(baseCurrency))
-            {
-                throw new ArgumentNullException(nameof(baseCurrency));
-            }
-            if (string.IsNullOrWhiteSpace(targetCurrency))
-            {
-                throw new ArgumentNullException(nameof(targetCurrency));
-            }
-
-            // Fetch the latest exchange rate from the repository
-            var exchangeRate = await exchangeRateRepository.GetLatestRateAsync(baseCurrency, targetCurrency);
-            if (exchangeRate == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(new ExchangeRateDto(
-                exchangeRate.BaseCurrencyCode, 
-                exchangeRate.TargetCurrencyCode,
-                exchangeRate.Rate,
-                exchangeRate.CreatedAt));
-
-        } */
     }
 }

@@ -27,12 +27,12 @@ public class FetchCountriesCommandHandler : IRequestHandler<FetchCountriesComman
         {
             var countryDto = await _countryApiClient.GetCountryByCodeAsync(countryCode);
 
-            //get currency code from the DTO
+            // Get currency code from the DTO
             var currencyCode = countryDto.currencies.GetCurrencyCode();
 
             var country = MapToCountry(countryDto, currencyCode);
 
-            var existingCountry = await _countryRepository.GetByCodeAsync(countryCode.ToUpperInvariant());
+            var existingCountry = await _countryRepository.GetByCodeAsync(countryCode);
             if (existingCountry == null)
             {
                 // Save new country to the database
@@ -47,7 +47,6 @@ public class FetchCountriesCommandHandler : IRequestHandler<FetchCountriesComman
                 existingCountry.Population = country.Population;
                 existingCountry.Currency = country.Currency;
                 existingCountry.Flag = country.Flag;
-                existingCountry.UpdatedAt = DateTime.Now;
 
                 await _countryRepository.UpdateAsync(existingCountry);
             }
@@ -74,10 +73,15 @@ public class FetchCountriesCommandHandler : IRequestHandler<FetchCountriesComman
             PhoneCodes = phoneCodes,
             Capital = countryDto.capital[0],
             Population = countryDto.population,
-            Currency = new Currency(currencyCode, currencyName, currencySymbol),
+            Currency = new Currency
+            {
+                Code = currencyCode,
+                Name = currencyName,
+                Symbol = currencySymbol
+
+            },
             Flag = countryDto.flag,
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now
+            CreatedAt = DateTime.Now
         };
 
         return country;

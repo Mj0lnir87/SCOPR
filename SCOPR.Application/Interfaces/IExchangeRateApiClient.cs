@@ -4,5 +4,5 @@ namespace SCOPR.Application.Interfaces;
 
 public interface IExchangeRateApiClient
 {
-    Task<ExchangeRateDto> GetLatestRatesAsync(string baseCurrency, List<string> targetCurrencies);
+    Task<IList<ExchangeRateDto>> GetLatestRatesAsync(string baseCurrency, List<string> targetCurrencies, DateTime startDate, DateTime endDate);
 }

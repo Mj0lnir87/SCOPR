@@ -8,6 +8,5 @@
         {
             CountryCodes = countryCodes;
         }
-
     }
 }

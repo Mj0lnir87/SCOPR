@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using SCOPR.API.DTOs;
+using SCOPR.Domain.Entities;
 
 namespace SCOPR.Application.Queries.GetCountrySummary;
 
-public class GetCountrySummaryQuery : IRequest<CountrySummaryDto>
+public class GetCountrySummaryQuery : IRequest<CountrySummary>
 {
     public string CountryCode { get; set; }
     public DateTime StartDate { get; set; }

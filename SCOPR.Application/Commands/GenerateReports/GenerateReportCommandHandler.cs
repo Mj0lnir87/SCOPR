@@ -1,5 +1,7 @@
 ﻿using MediatR;
+using SCOPR.API.DTOs;
 using SCOPR.Application.Interfaces;
+using SCOPR.Application.Queries.GetCountrySummary;
 using SCOPR.Domain.Entities;
 using SCOPR.Domain.Enums;
 
@@ -10,30 +12,32 @@ public class GenerateReportCommandHandler : IRequestHandler<GenerateReportComman
     private readonly IReportGenerator _reportGenerator;
     private readonly IExchangeRateRepository _exchangeRateRepository;
     private readonly ICountryRepository _countryRepository;
+    private readonly IMediator mediator;
 
     public GenerateReportCommandHandler(
         IReportGenerator reportGenerator,
         IExchangeRateRepository exchangeRateRepository,
-        ICountryRepository countryRepository)
+        ICountryRepository countryRepository,
+        IMediator mediator)
     {
         _reportGenerator = reportGenerator;
         _exchangeRateRepository = exchangeRateRepository;
         _countryRepository = countryRepository;
+        this.mediator = mediator;
     }
 
     public async Task<byte[]> Handle(GenerateReportCommand request, CancellationToken cancellationToken)
     {
-        List<Country> countries = await _countryRepository.GetAllByCodesAsync(request.CountryCodes);
         List<CountrySummary> countrySummaries = new List<CountrySummary>();
-
-        foreach (var country in countries)
+        foreach (var countryCode in request.CountryCodes)
         {
-            //calculate the average exchange rate for the country in the given period
-            var exchangeRates = await _exchangeRateRepository.GetAverageRateInPeriodAsync(CurrencyCode.EUR.ToString(), country.Currency.Code ,request.StartDate, request.EndDate);
+            var country = await mediator.Send(new GetCountrySummaryQuery(countryCode, request.StartDate, request.EndDate));
+            if (country == null)
+            {
+                throw new KeyNotFoundException($"No country found for country code {countryCode}");
+            }
 
-            CountrySummary summary = await _countryRepository.GetSummaryInPeriodAsync(country.Code, request.StartDate, request.EndDate);
-            summary.AverageExchangeRate = exchangeRates;
-            countrySummaries.Add(summary);
+            countrySummaries.Add(country);
         }
 
         return await _reportGenerator.GenerateCountrySummaryReportAsync(countrySummaries);

@@ -13,11 +13,12 @@ public class ExchangeRateRepo : IExchangeRateRepository
         _dbContext = dbContext;
     }
 
-    public async Task<ExchangeRate> GetLatestRateAsync(string baseCurrency, string targetCurrency)
+    public async Task<ExchangeRate> GetLatestRateAsync(string baseCurrency, string targetCurrency, DateTime date)
     {
         var filter = Builders<ExchangeRate>.Filter.And(
-            Builders<ExchangeRate>.Filter.Eq(r => r.BaseCurrencyCode, baseCurrency),
-            Builders<ExchangeRate>.Filter.Eq(r => r.TargetCurrencyCode, targetCurrency)
+            Builders<ExchangeRate>.Filter.Eq(r => r.BaseCurrencyCode, baseCurrency.ToUpperInvariant()),
+            Builders<ExchangeRate>.Filter.Eq(r => r.TargetCurrencyCode, targetCurrency.ToUpperInvariant()),
+            Builders<ExchangeRate>.Filter.Eq(r => r.Date, date)
         );
         return await _dbContext.GetCollection<ExchangeRate>("ExchangeRates").Find(filter).FirstOrDefaultAsync();
     }
@@ -25,10 +26,10 @@ public class ExchangeRateRepo : IExchangeRateRepository
     public async Task<decimal> GetAverageRateInPeriodAsync(string baseCurrency, string targetCurrency, DateTime start, DateTime end)
     {
         var filter = Builders<ExchangeRate>.Filter.And(
-            Builders<ExchangeRate>.Filter.Eq(r => r.BaseCurrencyCode, baseCurrency),
-            Builders<ExchangeRate>.Filter.Eq(r => r.TargetCurrencyCode, targetCurrency),
-            Builders<ExchangeRate>.Filter.Gte(r => r.CreatedAt, start),
-            Builders<ExchangeRate>.Filter.Lte(r => r.CreatedAt, end)
+            Builders<ExchangeRate>.Filter.Eq(r => r.BaseCurrencyCode, baseCurrency.ToUpperInvariant()),
+            Builders<ExchangeRate>.Filter.Eq(r => r.TargetCurrencyCode, targetCurrency.ToUpperInvariant()),
+            Builders<ExchangeRate>.Filter.Gte(r => r.Date, start),
+            Builders<ExchangeRate>.Filter.Lte(r => r.Date, end)
         );
         var exchangeRates = await _dbContext.GetCollection<ExchangeRate>("ExchangeRates").Find(filter).ToListAsync();
         return exchangeRates.Average(r => r.Rate);

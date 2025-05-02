@@ -4,7 +4,7 @@ namespace SCOPR.Application.Interfaces;
 
 public interface IExchangeRateRepository
 {
-    Task<ExchangeRate> GetLatestRateAsync(string baseCurrency, string targetCurrency);
+    Task<ExchangeRate> GetLatestRateAsync(string baseCurrency, string targetCurrency, DateTime Date);
 
     Task<decimal> GetAverageRateInPeriodAsync(string baseCurrency, string targetCurrency, DateTime start, DateTime end);
 

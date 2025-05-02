@@ -27,21 +27,23 @@ public static class DependencyInjection
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FetchCountriesCommandHandler).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCountrySummaryQuery).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetCountrySummaryQueryHandler).Assembly));*/
+        
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GenerateReportRequest).Assembly));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GenerateReportCommand).Assembly));
 
-        // MongoDB configuration  
+        // MongoDB configuration
         services.Configure<MongoDbSettings>(configuration.GetSection("ConnectionStrings"));
         services.AddSingleton<DbContext>();
 
-        // Repositories  
+        // Repositories
         services.AddScoped<ICountryRepository, CountryRepo>();
         services.AddScoped<IExchangeRateRepository, ExchangeRateRepo>();
 
-        // HTTP clients  
+        // HTTP clients
         services.AddHttpClient<ICountryApiClient, RestCountriesClient>();
         services.AddHttpClient<IExchangeRateApiClient, FixerApiClient>();
 
-        // Rapport generator  
+        // Rapport generator
         services.AddScoped<IReportGenerator, QuestPdfReportGenerator>();
 
         return services;

@@ -16,19 +16,11 @@ public class Country
     public Currency Currency { get; set; }
     public string Flag { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
 }
 
 public class Currency
 {
-    public string Code { get; }
-    public string Name { get; private set; }
-    public string Symbol { get; private set; }
-
-    public Currency(string code, string name, string symbol)
-    {
-        Code = code;
-        Name = name;
-        Symbol = symbol;
-    }
+    public string Code { get; set; }
+    public string Name { get; set; }
+    public string Symbol { get; set; }
 }
