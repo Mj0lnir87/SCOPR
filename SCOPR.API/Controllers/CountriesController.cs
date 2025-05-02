@@ -7,6 +7,7 @@ using SCOPR.Application.Queries.GetCountrySummary;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 using SCOPR.Domain.Entities;
+using SCOPR.Application.Queries.GetCountriesSummary;
 
 namespace SCOPR.API.Controllers
 {
@@ -125,13 +126,11 @@ namespace SCOPR.API.Controllers
             {
                 return BadRequest(new { Message = ex.Message });
             }
-
         }
 
         /// <summary>
-        /// Gets the summaries of multiple countries based on the provided country codes and date range.
+        /// Gets the summaries of all countries based on the provided date range.
         /// </summary>
-        /// <param name="countryCodes"></param>
         /// <param name="startDate"></param>
         /// <param name="endDate"></param>
         /// <returns></returns>
@@ -140,14 +139,9 @@ namespace SCOPR.API.Controllers
         [SwaggerResponse(400)]
         [SwaggerResponse(404)]
         [SwaggerResponse(500)]
-        [SwaggerOperation(Summary = "Get country summaries", Description = "Fetches the summaries of multiple countries based on the provided country codes and date range.")]
-        public async Task<ActionResult<IList<CountrySummary>>> GetCountriesAsync([FromQuery]IList<string> countryCodes, DateTime startDate, DateTime endDate)
+        [SwaggerOperation(Summary = "Get all countries summary", Description = "Fetches the summaries of all countries based on the provided date range.")]
+        public async Task<ActionResult<IList<CountrySummary>>> GetCountriesAsync(DateTime startDate, DateTime endDate)
         {
-            // Validate the countryCodes
-            if (countryCodes == null || !countryCodes.Any())
-            {
-                return BadRequest(new { Message = "At least one country code must be provided." });
-            }
             // Validate the date range
             if (startDate >= endDate)
             {
@@ -165,19 +159,14 @@ namespace SCOPR.API.Controllers
             }
             try
             {
-                IList<CountrySummary> countries = new List<CountrySummary>();
-                foreach (var code in countryCodes)
+                // Fetch the country summary from the repository
+                var countriesSymmary = await mediator.Send(new GetCountriesSummaryQuery(startDate, endDate));
+                if (countriesSymmary == null)
                 {
-                    // Fetch the country summary from the repository
-                    var countrySymmary = await mediator.Send(new GetCountrySummaryQuery(code, startDate, endDate));
-                    if (countries == null)
-                    {
-                        return NotFound();
-                    }
-                    countries.Add(countrySymmary);
+                    return NotFound();
                 }
 
-                return Ok(countries);
+                return Ok(countriesSymmary);
             }
             catch (Exception ex)
             {

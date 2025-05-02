@@ -76,7 +76,8 @@ The project follows a Clean Architecture pattern with CQRS (Command Query Respon
 
 ### Countries
 
-- `GET /api/countries/{code}` - Get country by code
+- `GET /api/countries/summary/{code}` - Get country summary by country code
+- `GET /api/countries/summary` - Get all countries summary
 - `POST /api/countries/fetch` - Refresh country data from external API
 
 ### Exchange Rates

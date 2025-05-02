@@ -47,7 +47,8 @@ public class ExchangeRateRepo : IExchangeRateRepository
             Builders<ExchangeRate>.Filter.Lte(r => r.Date, end)
         );
         var exchangeRates = await _dbContext.GetCollection<ExchangeRate>("ExchangeRates").Find(filter).ToListAsync();
-        return exchangeRates.Average(r => r.Rate);
+        
+        return exchangeRates.Count > 0 ? exchangeRates.Average(r => r.Rate) : 0;
     }
 
     /// <summary>

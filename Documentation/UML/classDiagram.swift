@@ -101,9 +101,27 @@ direction TB
 	    +DateTime StartDate
 	    +DateTime EndDate
 	    +GetCountrySummaryQuery(string, DateTime, DateTime)
-	    +GetCountrySummaryQuery(string, DateTime, DateTime)
     }
     class GetCountrySummaryQueryHandler {
+	    -ICountryRepository _countryRepository
+	    -IExchangeRateRepository _exchangeRateRepository
+	    -ICountryRepository _countryRepository
+	    -IExchangeRateRepository _exchangeRateRepository
+	    +Handle(GetCountrySummaryQuery, CancellationToken) Task~CountrySummary~
+	    -MapToCountrySummary(Country, decimal, double, DateTime, DateTime) CountrySummary
+	    +Task~CountrySummary~ Handle(GetCountrySummaryQuery, CancellationToken)
+	    -CountrySummary MapToCountrySummary(Country, decimal, double, DateTime, DateTime)
+    }
+	class GetCountriesSummaryQuery {
+	    +string CountryCode
+	    +DateTime StartDate
+	    +DateTime EndDate
+	    +string CountryCode
+	    +DateTime StartDate
+	    +DateTime EndDate
+	    +GetCountriesSummaryQuery(string, DateTime, DateTime)
+    }
+    class GetCountriesSummaryQueryHandler {
 	    -ICountryRepository _countryRepository
 	    -IExchangeRateRepository _exchangeRateRepository
 	    -ICountryRepository _countryRepository
@@ -206,6 +224,7 @@ direction TB
     }
     class ICountryRepository {
 	    +Task~Country~ GetByCodeAsync(string)
+		+Task~IList~Country~~ GetAllAsync()
 	    +Task AddAsync(Country)
 	    +Task UpdateAsync(Country)
 	    +Task~double~ GetAveragePopulationInPeriodAsync(string, DateTime, DateTime)
@@ -274,6 +293,7 @@ direction TB
     CountriesController ..> FetchCountriesRequest
     CountriesController ..> FetchCountriesCommand
     CountriesController ..> GetCountrySummaryQuery
+    CountriesController ..> GetCountriesSummaryQuery
     ExchangeRatesController ..> FetchExchangeRatesRequest
     ExchangeRatesController ..> FetchExchangeRatesCommand
     ReportsController ..> GenerateReportRequest
@@ -298,7 +318,9 @@ direction TB
     GenerateReportCommandHandler --> ICountryRepository
     GenerateReportCommandHandler --> IExchangeRateRepository
     GetCountrySummaryQueryHandler --> ICountryRepository
-    GetCountrySummaryQueryHandler --> IExchangeRateRepository
+    GetCountrySummaryQueryHandler --> IExchangeRateRepository    
+	GetCountriesSummaryQueryHandler --> ICountryRepository
+    GetCountriesSummaryQueryHandler --> IExchangeRateRepository
     CountryRepo --> DbContext
     ExchangeRateRepo --> DbContext
 

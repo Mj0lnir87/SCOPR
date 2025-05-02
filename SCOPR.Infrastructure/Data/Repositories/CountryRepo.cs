@@ -13,6 +13,7 @@ public class CountryRepo : ICountryRepository
     {
         _dbContext = dbContext;
     }
+    
 
     /// <summary>
     /// Adds a new country to the database.
@@ -37,6 +38,23 @@ public class CountryRepo : ICountryRepository
             Builders<Country>.Filter.Lt(c => c.CreatedAt, DateTime.Now.Date.AddDays(1))
             );
         return await _dbContext.GetCollection<Country>("Countries").Find(filter).FirstOrDefaultAsync();
+    }
+
+    /// <summary>
+    /// Gets all countries from the database.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<IList<Country>> GetAllAsync()
+    {
+        var countries = await _dbContext.GetCollection<Country>("Countries").Find(_ => true).ToListAsync();
+
+        // Ensure distinct countries based on the Code property
+        var distinctCountries = countries
+            .GroupBy(c => c.Code.ToUpperInvariant())
+            .Select(g => g.First())
+            .ToList();
+
+        return distinctCountries;
     }
 
     /// <summary>
@@ -65,7 +83,7 @@ public class CountryRepo : ICountryRepository
             Builders<Country>.Filter.Lt(c => c.CreatedAt, endDate.Date.AddDays(1))
         );
         var population =  await _dbContext.GetCollection<Country>("Countries").Find(filter).ToListAsync();
-        return population.Average(p => p.Population);
+        return population.Count > 0 ? population.Average(p => p.Population) : 0;
 
     }
 }
