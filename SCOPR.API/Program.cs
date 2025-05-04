@@ -21,6 +21,29 @@ builder.Services.AddSwaggerGen(options =>
     options.EnableAnnotations(); // Enable support annotations
 });
 
+// Read AllowedHosts from configuration
+var allowedHosts = builder.Configuration["AllowedHosts"]?
+    .Split(';', StringSplitOptions.RemoveEmptyEntries)
+    ?? Array.Empty<string>();
+
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedHostsPolicy", policy =>
+    {
+        if (allowedHosts.Contains("*"))
+        {
+            policy.AllowAnyOrigin(); // Allow all origins if '*' is specified
+        }
+        else
+        {
+            policy.WithOrigins(allowedHosts) // Allow only specified origins
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        }
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.  
@@ -31,6 +54,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowedHostsPolicy"); // CORS middleware
 
 app.UseAuthorization();
 

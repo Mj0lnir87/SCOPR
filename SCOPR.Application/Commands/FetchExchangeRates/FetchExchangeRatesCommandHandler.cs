@@ -49,7 +49,7 @@ public class FetchExchangeRatesCommandHandler : IRequestHandler<FetchExchangeRat
 
                 var exchangeRate = new ExchangeRate
                 {
-                    BaseCurrencyCode = request.BaseCurrency,
+                    BaseCurrencyCode = request.BaseCurrency.ToUpperInvariant(),
                     TargetCurrencyCode = targetCurrency.ToUpperInvariant(),
                     Rate = (decimal)targetCurrencyRate,
                     Date = exchangeRateDto.date,
@@ -58,7 +58,7 @@ public class FetchExchangeRatesCommandHandler : IRequestHandler<FetchExchangeRat
                 };
 
                 // Save to database
-                var existingExchangeRate = await _exchangeRateRepository.GetLatestRateAsync(request.BaseCurrency, targetCurrency.ToUpperInvariant(), exchangeRateDto.date);
+                var existingExchangeRate = await _exchangeRateRepository.GetLatestRateAsync(request.BaseCurrency.ToUpperInvariant(), targetCurrency.ToUpperInvariant(), exchangeRateDto.date);
                 if (existingExchangeRate == null)
                 {
                     await _exchangeRateRepository.AddAsync(exchangeRate);
